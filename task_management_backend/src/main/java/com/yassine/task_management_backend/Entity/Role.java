@@ -15,7 +15,12 @@ import java.util.stream.Collectors;
 public enum Role {
 
     USER(Collections.emptySet()),
-    ADMIN(Collections.emptySet());
+    ADMIN(Set.of(
+            Permission.ADMIN_READ,
+            Permission.ADMIN_UPDATE,
+            Permission.ADMIN_CREATE,
+            Permission.ADMIN_DELETE
+    ));
     private final Set<Permission> permissions;
 
     public List<SimpleGrantedAuthority> getAuthorities() {

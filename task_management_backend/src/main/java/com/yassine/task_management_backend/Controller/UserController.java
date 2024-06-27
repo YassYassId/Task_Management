@@ -2,13 +2,11 @@ package com.yassine.task_management_backend.Controller;
 
 import com.yassine.task_management_backend.DTO.*;
 import com.yassine.task_management_backend.Entity.User;
+import com.yassine.task_management_backend.Repository.UserRepository;
 import com.yassine.task_management_backend.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -18,6 +16,8 @@ import java.security.Principal;
 public class UserController {
 
     private final UserService userService;
+
+    private final UserRepository userRepository;
 
     @PostMapping("/register")
     public ResponseEntity<JwtAuthenticationResponse> register(@RequestBody RegisterRequest registerRequest) {
@@ -50,5 +50,21 @@ public class UserController {
     public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request, Principal connectedUser) {
         userService.changePassword(request, connectedUser);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<User> getProfile(Principal principal) {
+        User user = userRepository.findByEmail(principal.getName());
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<User> updateProfile(@RequestBody User userDetails, Principal principal) {
+        User user = userRepository.findByEmail(principal.getName());
+        user.setNom(userDetails.getNom());
+        user.setPrenom(userDetails.getPrenom());
+        user.setEmail(userDetails.getEmail());
+        userRepository.save(user);
+        return ResponseEntity.ok(user);
     }
 }

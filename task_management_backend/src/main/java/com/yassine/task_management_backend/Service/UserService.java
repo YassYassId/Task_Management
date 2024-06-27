@@ -6,10 +6,10 @@ import com.yassine.task_management_backend.Entity.Role;
 import com.yassine.task_management_backend.Entity.User;
 import com.yassine.task_management_backend.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +17,18 @@ import java.security.Principal;
 import java.util.HashMap;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,@Lazy AuthenticationManager authenticationManager, JWTService jwtService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+    }
 
 
     public UserDetailsService userDetailsService(){
@@ -102,10 +108,6 @@ public class UserService {
         // check if the current password is correct
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new IllegalStateException("Wrong password");
-        }
-        // check if the two new passwords are the same
-        if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
-            throw new IllegalStateException("Password are not the same");
         }
 
         // update the password
