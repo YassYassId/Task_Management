@@ -14,7 +14,7 @@ const Features = () => {
               alt="Feature 1"
               className="w-full h-56 object-cover rounded"
             />
-            <h3 className="text-xl font-semibold mt-4">Feature 1</h3>
+            <h3 className="text-xl font-semibold mt-4">Managing</h3>
             <p className="mt-2 text-gray-700">
               Manage your tasks efficiently with our easy-to-use interface.
             </p>
@@ -25,7 +25,7 @@ const Features = () => {
               alt="Feature 2"
               className="w-full h-56 object-cover rounded"
             />
-            <h3 className="text-xl font-semibold mt-4">Feature 2</h3>
+            <h3 className="text-xl font-semibold mt-4">Tracking</h3>
             <p className="mt-2 text-gray-700">
               Track your progress and achieve your goals with detailed
               analytics.

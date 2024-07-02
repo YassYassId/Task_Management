@@ -39,7 +39,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <section className="bg-blue-700 text-white py-12">
+    <section className="bg-blue-800 bg-opacity-60 rounded-md text-white py-12">
       <div className="container mx-auto text-center px-4">
         <h2 className="text-2xl font-bold mb-4">
           Sign Up & Achieve Your Goals

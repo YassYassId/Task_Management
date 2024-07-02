@@ -2,12 +2,16 @@ import React from "react";
 import SignUpForm from "./SignUpForm";
 import AboutUs from "./AboutUs";
 import Features from "./Features";
+import backgroundImage from "../assets/landingPageImage.jpg";
 
 const LandingPage = () => {
   return (
     <div>
-      <section className="bg-blue-700 text-white py-6 px-4">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between">
+      <section
+        className="text-white py-6 px-4 bg-cover bg-center"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between bg-opacity-25 bg-blue-700 p-4 rounded-lg">
           <div className="text-center md:text-left mb-8 md:mb-0 md:w-1/2">
             <h1 className="text-4xl font-bold mb-4">
               We help you achieve your goals properly
@@ -34,14 +38,13 @@ const LandingPage = () => {
               </li>
             </ul>
           </div>
-          {/* Add a border here */}
           <div className="md:w-1/2">
             <SignUpForm />
           </div>
         </div>
       </section>
-      <AboutUs />
       <Features />
+      <AboutUs />
     </div>
   );
 };
