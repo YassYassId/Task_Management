@@ -2,7 +2,7 @@ services:
   - type: web
     name: task-management-backend
     env: docker
-    dockerfilePath: ./task_management_backend/Dockerfile
+    dockerfilePath: ./Dockerfile
     buildCommand: ./mvnw clean install
     startCommand: java -jar target/*.jar
     runtime: docker
