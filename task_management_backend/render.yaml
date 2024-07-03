@@ -1,7 +1,6 @@
 services:
   - type: web
-    name: task-management-backend
-    env: docker
+    name: TaskManagementAPI
     dockerfilePath: Dockerfile
     buildCommand: ./mvnw clean install
     startCommand: java -jar target/*.jar
