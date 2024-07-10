@@ -24,51 +24,50 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // Unique identifier for the user
 
-    private String nom;
+    private String nom; // User's last name
 
-    private String prenom;
+    private String prenom; // User's first name
 
     @Column(unique = true)
-    private String email;
-
+    private String email; // Unique email address used for authentication
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;
-
+    private String password; // User's password (access is restricted to write only)
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role; // User's role in the system
 
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.getAuthorities();
+        return role.getAuthorities(); // Retrieve user's authorities based on assigned role
     }
+
     @Override
     @JsonIgnore
     public String getUsername() {
-        return email;
+        return email; // Return email as the username for authentication
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return true; // User account never expires (static implementation)
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return true; // User account is never locked (static implementation)
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return true; // User credentials (password) never expire (static implementation)
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return true; // User account is always enabled (static implementation)
     }
 }
