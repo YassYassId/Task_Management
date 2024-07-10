@@ -16,21 +16,23 @@ import java.security.Principal;
 public class UserController {
 
     private final UserService userService;
-
     private final UserRepository userRepository;
 
+    // Register a new user
     @PostMapping("/register")
     public ResponseEntity<JwtAuthenticationResponse> register(@RequestBody RegisterRequest registerRequest) {
         JwtAuthenticationResponse response = userService.register(registerRequest);
         return ResponseEntity.ok(response);
     }
 
+    // Authenticate user login
     @PostMapping("/login")
     public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest signInRequest) {
         JwtAuthenticationResponse response = userService.signin(signInRequest);
         return ResponseEntity.ok(response);
     }
 
+    // Refresh authentication token
     @PostMapping("/refresh-token")
     public ResponseEntity<JwtAuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         JwtAuthenticationResponse response = userService.refreshToken(refreshTokenRequest);
@@ -40,24 +42,28 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    // Save user details
     @PostMapping("/save")
     public ResponseEntity<Void> saveUser(@RequestBody User user) {
         userService.saveUser(user);
         return ResponseEntity.ok().build();
     }
 
+    // Change user password
     @PostMapping("/change-password")
     public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request, Principal connectedUser) {
         userService.changePassword(request, connectedUser);
         return ResponseEntity.ok().build();
     }
 
+    // Get user profile
     @GetMapping("/profile")
     public ResponseEntity<User> getProfile(Principal principal) {
         User user = userRepository.findByEmail(principal.getName());
         return ResponseEntity.ok(user);
     }
 
+    // Update user profile
     @PutMapping("/profile")
     public ResponseEntity<User> updateProfile(@RequestBody User userDetails, Principal principal) {
         User user = userRepository.findByEmail(principal.getName());
