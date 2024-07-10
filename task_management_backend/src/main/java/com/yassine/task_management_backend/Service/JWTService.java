@@ -22,56 +22,64 @@ public class JWTService {
     @Value("${application.security.jwt.secret-key}")
     public String secretKey;
 
+    // Generates a JWT token for the given UserDetails
     public String generateToken(UserDetails userDetails){
         return Jwts
                 .builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
-                .signWith(getSigninKey() , SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // Token validity for 1 day
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String generateRefreshToken(Map<String , Object> extraClaims , UserDetails userDetails){
+    // Generates a refresh token with additional claims for the given UserDetails
+    public String generateRefreshToken(Map<String, Object> extraClaims, UserDetails userDetails){
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 604800000))
-                .signWith(getSigninKey() , SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + 604800000)) // Refresh token validity for 7 days
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    private Key getSigninKey(){
+    // Retrieves the signing key for JWT generation
+    private Key getSigningKey(){
         byte[] key = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(key);
     }
 
-    private <T> T extractClaim(String token , Function<Claims, T> claimsResolvers){
+    // Extracts a specific claim from the JWT token
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolvers){
         final Claims claims = extractAllClaims(token);
         return claimsResolvers.apply(claims);
     }
 
+    // Extracts all claims from the JWT token
     private Claims extractAllClaims(String token){
         return Jwts
                 .parserBuilder()
-                .setSigningKey(getSigninKey())
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 
+    // Extracts the username from the JWT token
     public String extractUsername(String token){
-        return extractClaim(token , Claims::getSubject);
+        return extractClaim(token, Claims::getSubject);
     }
 
-    public boolean isTokenValid(String token , UserDetails userDetails){
+    // Validates if the JWT token is valid for the given UserDetails
+    public boolean isTokenValid(String token, UserDetails userDetails){
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
+    // Checks if the JWT token is expired
     private boolean isTokenExpired(String token){
-        return extractClaim(token , Claims::getExpiration).before(new Date());
+        return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 }
