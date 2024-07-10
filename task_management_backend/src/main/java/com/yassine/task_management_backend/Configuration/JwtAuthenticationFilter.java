@@ -24,34 +24,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JWTService jwtService;
     private final UserService userService;
 
+    // Constructor injection of JWTService and UserService
     public JwtAuthenticationFilter(@Lazy JWTService jwtService, @Lazy UserService userService) {
         this.jwtService = jwtService;
         this.userService = userService;
     }
 
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
 
-        if(StringUtils.isEmpty(authHeader) || !authHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request , response);
+        // Check if Authorization header is present and starts with "Bearer "
+        if (StringUtils.isEmpty(authHeader) || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response); // Continue to the next filter in the chain
             return;
         }
 
+        // Extract JWT token from Authorization header
         jwt = authHeader.substring(7);
         username = jwtService.extractUsername(jwt);
 
-        if(StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null){
+        // Check if username is extracted from JWT and there is no existing authentication in SecurityContextHolder
+        if (StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // Load user details from UserDetailsService based on username
             UserDetails userDetails = userService.userDetailsService().loadUserByUsername(username);
 
-            if(jwtService.isTokenValid(jwt , userDetails)){
+            // Validate JWT token against loaded user details
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                // Create authentication token with user details and set it to the SecurityContext
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
 
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                        userDetails , null , userDetails.getAuthorities()
+                        userDetails, null, userDetails.getAuthorities()
                 );
 
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -61,7 +68,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        filterChain.doFilter(request , response);
-
+        filterChain.doFilter(request, response); // Continue to the next filter in the chain
     }
 }
